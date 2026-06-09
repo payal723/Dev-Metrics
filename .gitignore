@@ -13,6 +13,9 @@
 # testing
 /coverage
 
+server/node_modules
+server/.env
+
 # next.js
 /.next/
 /out/
