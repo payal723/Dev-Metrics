@@ -10,6 +10,7 @@ export default function Dashboard() {
     const [repos, setRepos] = useState([]);
     const [user, setUser] = useState(null);
     const [stats, setStats] = useState(null);
+    const [quality, setQuality] = useState(null);
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -24,22 +25,25 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchAll = async () => {
             try {
-                const [heatmapRes, reposRes, userRes, statsRes] = await Promise.all([
+                const [heatmapRes, reposRes, userRes, statsRes, qualityRes] = await Promise.all([
                     fetch("https://dev-metrics-cd6k.onrender.com/api/commits/heatmap", { credentials: 'include' }),
                     fetch("https://dev-metrics-cd6k.onrender.com/api/repos/top", { credentials: 'include' }),
                     fetch("https://dev-metrics-cd6k.onrender.com/api/user/me", { credentials: 'include' }),
                     fetch("https://dev-metrics-cd6k.onrender.com/api/stats", { credentials: 'include' }),
+                    fetch("https://dev-metrics-cd6k.onrender.com/api/quality", { credentials: 'include' }),
                 ]);
                 const heatmapJson = await heatmapRes.json();
                 const reposJson = await reposRes.json();
                 const userJson = await userRes.json();
                 const statsJson = await statsRes.json();
+                const qualityJson = await qualityRes.json();
 
                 const chartData = Object.entries(heatmapJson.data).map(([date, count]) => ({ date, count }));
                 setHeatmap(chartData);
                 setRepos(reposJson);
                 setUser(userJson);
                 setStats(statsJson.data);
+                setQuality(qualityJson.data);
             } catch (err) { console.error(err); }
         };
         fetchAll();
@@ -112,7 +116,7 @@ export default function Dashboard() {
             </div>
 
             {/* Top Repos */}
-            <div className="bg-[#161b22] border border-[#30363d] rounded-2xl p-6">
+            <div className="bg-[#161b22] border border-[#30363d] rounded-2xl p-6 mb-6">
                 <h2 className="text-xs text-[#8b949e] uppercase tracking-widest mb-5">Top Repositories</h2>
                 <div className="flex flex-col gap-3">
                     {repos.map((repo, i) => (
@@ -132,6 +136,43 @@ export default function Dashboard() {
                     ))}
                 </div>
             </div>
+
+            {/* Commit Quality */}
+            {quality && (
+                <div className="bg-[#161b22] border border-[#30363d] rounded-2xl p-6">
+                    <h2 className="text-xs text-[#8b949e] uppercase tracking-widest mb-5">Commit Quality Analyzer</h2>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        {[
+                            { label: 'Quality Score', value: `${quality.qualityScore}/100`, color: quality.qualityScore >= 60 ? 'text-green-400' : 'text-yellow-400' },
+                            { label: 'Vague Commits', value: `${quality.vaguePercent}%`, color: 'text-red-400' },
+                            { label: 'Avg Msg Length', value: `${quality.avgMessageLength} chars`, color: 'text-[#58a6ff]' },
+                            { label: 'Total Analyzed', value: quality.totalAnalyzed, color: 'text-purple-400' },
+                        ].map((s, i) => (
+                            <div key={i} className="bg-[#0d1117] border border-[#21262d] rounded-xl p-4">
+                                <p className="text-[#8b949e] text-xs uppercase tracking-widest mb-2">{s.label}</p>
+                                <p className={`text-lg font-bold ${s.color}`}>{s.value}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        {quality.recentMessages.map((msg, i) => (
+                            <div key={i} className="flex items-center gap-3 px-4 py-2 bg-[#0d1117] rounded-lg border border-[#21262d]">
+                                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                                    msg.type === 'good' ? 'bg-green-400' :
+                                    msg.type === 'vague' ? 'bg-red-400' : 'bg-yellow-400'
+                                }`}></span>
+                                <span className="text-sm text-[#e6edf3] truncate">{msg.message}</span>
+                                <span className={`text-xs ml-auto flex-shrink-0 ${
+                                    msg.type === 'good' ? 'text-green-400' :
+                                    msg.type === 'vague' ? 'text-red-400' : 'text-yellow-400'
+                                }`}>{msg.type}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
