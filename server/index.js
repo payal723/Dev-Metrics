@@ -13,7 +13,11 @@ import commitRouter from './routes/commits.js'
 const app = express();
 connectDb();
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+}));
+
 app.use(cookieParser());
 app.use(express.json());
 
