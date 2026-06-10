@@ -8,6 +8,7 @@ import authRouter from './routes/auth.js'
 import userRouter from './routes/user.js';
 import repoRouter from './routes/repos.js'
 import commitRouter from './routes/commits.js'
+import statsRouter from './routes/stats.js'
 
 
 const app = express();
@@ -31,6 +32,7 @@ app.use("/api/auth" , authRouter);
 app.use('/api/user', userRouter);
 app.use('/api/repos' , repoRouter )
 app.use('/api/commits' , commitRouter )
+app.use('/api/stats', statsRouter);
 
 
 
