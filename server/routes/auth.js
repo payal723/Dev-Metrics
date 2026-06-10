@@ -5,6 +5,15 @@ import jwt from 'jsonwebtoken';
 const router = express.Router();
 
 
+router.get('/logout', (req, res) => {
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none'
+    })
+    res.json({ message: 'Logged out' })
+})
+
 //1st router
 router.get("/github", (req, res) => {
     const githubUrl = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=repo,user`;

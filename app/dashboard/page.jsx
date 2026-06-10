@@ -1,11 +1,31 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { useRouter } from 'next/navigation'
+import { User } from 'lucide-react'
 
 export default function Dashboard() {
+    const router = useRouter()
+
     const [heatmap, setHeatmap] = useState([]);
     const [repos, setRepos] = useState([]);
     const [user, setUser] = useState(null);
+
+    useEffect(() => {
+    const checkAuth = async () => {
+        try {
+            const res = await fetch("https://dev-metrics-cd6k.onrender.com/api/user/me", { 
+                credentials: 'include' 
+            })
+            if (!res.ok) {
+                router.push('/')
+            }
+        } catch {
+            router.push('/')
+        }
+    }
+    checkAuth()
+}, [])
 
     useEffect(() => {
         const fetchAll = async () => {
@@ -34,11 +54,20 @@ export default function Dashboard() {
     return (
         <div className="min-h-screen bg-[#0d1117] text-white px-6 py-10 font-mono">
 
-            {/* Header */}
-            <div className="mb-10">
-                <h1 className="text-3xl font-bold text-[#58a6ff] tracking-tight">Dev Metrics <span>📊</span></h1>
-                <p className="text-[#8b949e] text-sm mt-1">Your GitHub activity — live & real</p>
-            </div>
+           {/* Header */}
+<div className="flex justify-between items-center mb-10">
+    <div>
+        <h1 className="text-3xl font-bold text-[#58a6ff] tracking-tight">Dev Metrics</h1>
+        <p className="text-[#8b949e] text-sm mt-1">Your GitHub activity — live & real</p>
+    </div>
+    <div className="flex items-center gap-3">
+        <button onClick={() => router.push('/profile')}
+            className="flex items-center gap-2 bg-[#161b22] border border-[#30363d] px-3 py-2 rounded-lg text-sm hover:border-[#58a6ff] transition-colors">
+            <User size={14} className="text-[#58a6ff]" />
+            Profile
+        </button>
+    </div>
+</div>
 
             {/* Top Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
