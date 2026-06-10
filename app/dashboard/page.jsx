@@ -49,7 +49,7 @@ export default function Dashboard() {
                         <img src={user.avatarUrl} className="w-14 h-14 rounded-full border-2 border-[#58a6ff]" />
                         <div>
                             <p className="text-lg font-bold">{user.username}</p>
-                            <p className="text-[#8b949e] text-sm">GitHub Connected ✅</p>
+                            <p className="text-[#8b949e] text-sm">GitHub Connected </p>
                         </div>
                     </>}
                 </div>
@@ -92,7 +92,7 @@ export default function Dashboard() {
                                 <span className="text-xs text-[#8b949e] bg-[#161b22] px-2 py-1 rounded-full border border-[#30363d]">
                                     {repo.pushedAt?.slice(0, 10)}
                                 </span>
-                                <span className="text-xs text-[#e3b341]">⭐ {repo.stars}</span>
+                                <span className="text-xs text-[#e3b341]"> {repo.stars}</span>
                             </div>
                         </a>
                     ))}

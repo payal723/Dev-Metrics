@@ -33,7 +33,8 @@ app.use('/api/repos' , repoRouter )
 app.use('/api/commits' , commitRouter )
 
 
+const PORT = process.env.PORT || 5000;
 
-app.listen(5000 , () => {
-    console.log("Server is responding");
+app.listen(PORT, () => {
+    console.log(`Server is responding on port ${PORT}`);
 })
