@@ -58,7 +58,7 @@ router.get("/github/callback", async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000  
 
 });
-res.redirect('http://localhost:3000/dashboard');
+res.redirect('https://dev-metrics-delta.vercel.app/dashboard');
 })
 
 export default router; 

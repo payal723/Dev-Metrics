@@ -14,7 +14,7 @@ const app = express();
 connectDb();
 
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://your-vercel-url.vercel.app'],
+    origin: ['http://localhost:3000', 'https://dev-metrics-delta.vercel.app'],
     credentials: true
 }));
 
@@ -31,6 +31,7 @@ app.use("/api/auth" , authRouter);
 app.use('/api/user', userRouter);
 app.use('/api/repos' , repoRouter )
 app.use('/api/commits' , commitRouter )
+
 
 
 const PORT = process.env.PORT || 5000;
