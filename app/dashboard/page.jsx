@@ -10,6 +10,8 @@ export default function Dashboard() {
     const [heatmap, setHeatmap] = useState([]);
     const [repos, setRepos] = useState([]);
     const [user, setUser] = useState(null);
+    const [stats, setStats] = useState(null);
+
 
     useEffect(() => {
     const checkAuth = async () => {
@@ -33,7 +35,9 @@ export default function Dashboard() {
                 const [heatmapRes, reposRes, userRes] = await Promise.all([
                     fetch("https://dev-metrics-cd6k.onrender.com/api/commits/heatmap", { credentials: 'include' }),
                     fetch("https://dev-metrics-cd6k.onrender.com/api/repos/top", { credentials: 'include' }),
-                    fetch("https://dev-metrics-cd6k.onrender.com/api/user/me", { credentials: 'include' })
+                    fetch("https://dev-metrics-cd6k.onrender.com/api/user/me", { credentials: 'include' }),
+                    fetch("https://dev-metrics-cd6k.onrender.com/api/stats", { credentials: 'include' }),
+
                 ]);
                 const heatmapJson = await heatmapRes.json();
                 const reposJson = await reposRes.json();
@@ -83,7 +87,25 @@ export default function Dashboard() {
                     </>}
                 </div>
 
+                {/* Productivity Stats */}
+{stats && (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {[
+            { label: 'Productivity Score', value: `${stats.productivityScore}/100`, color: 'text-green-400' },
+            { label: 'Current Streak', value: `${stats.currentStreak} days`, color: 'text-[#58a6ff]' },
+            { label: 'Longest Streak', value: `${stats.longestStreak} days`, color: 'text-purple-400' },
+            { label: 'Most Active', value: `${stats.mostActiveDay} ${stats.mostActiveTime}`, color: 'text-yellow-400' },
+        ].map((stat, i) => (
+            <div key={i} className="bg-[#161b22] border border-[#30363d] rounded-2xl p-5">
+                <p className="text-[#8b949e] text-xs uppercase tracking-widest mb-2">{stat.label}</p>
+                <p className={`text-lg font-bold ${stat.color}`}>{stat.value}</p>
+            </div>
+        ))}
+    </div>
+)}
+
                 {/* Stat Card */}
+
                 <div className="bg-[#161b22] border border-[#30363d] rounded-2xl p-5 flex flex-col justify-center">
                     <p className="text-4xl font-bold text-[#58a6ff]">{totalPushes}</p>
                     <p className="text-[#8b949e] text-xs mt-1 uppercase tracking-widest">Total Pushes</p>
