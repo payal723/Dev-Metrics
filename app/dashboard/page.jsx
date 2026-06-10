@@ -11,9 +11,9 @@ export default function Dashboard() {
         const fetchAll = async () => {
             try {
                 const [heatmapRes, reposRes, userRes] = await Promise.all([
-                    fetch("http://localhost:5000/api/commits/heatmap", { credentials: 'include' }),
-                    fetch("http://localhost:5000/api/repos/top", { credentials: 'include' }),
-                    fetch("http://localhost:5000/api/user/me", { credentials: 'include' })
+                    fetch("https://dev-metrics-cd6k.onrender.com/api/commits/heatmap", { credentials: 'include' }),
+                    fetch("https://dev-metrics-cd6k.onrender.com/api/repos/top", { credentials: 'include' }),
+                    fetch("https://dev-metrics-cd6k.onrender.com/api/user/me", { credentials: 'include' })
                 ]);
                 const heatmapJson = await heatmapRes.json();
                 const reposJson = await reposRes.json();
