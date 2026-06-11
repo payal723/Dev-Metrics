@@ -6,7 +6,7 @@ import { User, GitBranch, Flame, Trophy, Clock, Activity, Star, Code2, AlertCirc
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import SprintGoals from '@/components/SprintGoals'
+import SprintGoals from '@/components/ui/SprintGoals'
 
 export default function Dashboard() {
     const router = useRouter()
