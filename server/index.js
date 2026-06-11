@@ -10,6 +10,7 @@ import repoRouter from './routes/repos.js'
 import commitRouter from './routes/commits.js'
 import statsRouter from './routes/stats.js'
 import qualityRouter from './routes/quality.js';
+import sprintRoutes from './routes/sprints.js';
 
 
 
@@ -36,6 +37,8 @@ app.use('/api/repos' , repoRouter )
 app.use('/api/commits' , commitRouter )
 app.use('/api/stats', statsRouter);
 app.use('/api/quality', qualityRouter);
+app.use('/api/sprints', sprintRoutes);
+
 
 
 
