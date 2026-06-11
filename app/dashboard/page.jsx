@@ -2,7 +2,10 @@
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useRouter } from 'next/navigation'
-import { User } from 'lucide-react'
+import { User, GitBranch, Flame, Trophy, Clock, Activity, Star, Code2, AlertCircle, CheckCircle2, MinusCircle } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
 
 export default function Dashboard() {
     const router = useRouter()
@@ -11,6 +14,7 @@ export default function Dashboard() {
     const [user, setUser] = useState(null);
     const [stats, setStats] = useState(null);
     const [quality, setQuality] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -44,135 +48,209 @@ export default function Dashboard() {
                 setUser(userJson);
                 setStats(statsJson.data);
                 setQuality(qualityJson.data);
-            } catch (err) { console.error(err); }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
         };
         fetchAll();
     }, []);
 
     const totalPushes = heatmap.reduce((sum, d) => sum + d.count, 0);
 
+    if (loading) return (
+        <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
+            <div className="text-center">
+                <div className="w-8 h-8 border-2 border-[#58a6ff] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-[#8b949e] text-sm font-mono">Fetching your GitHub data...</p>
+            </div>
+        </div>
+    )
+
     return (
-        <div className="min-h-screen bg-[#0d1117] text-white px-6 py-10 font-mono">
-
-            {/* Header */}
-            <div className="flex justify-between items-center mb-10">
-                <div>
-                    <h1 className="text-3xl font-bold text-[#58a6ff] tracking-tight">Dev Metrics</h1>
-                    <p className="text-[#8b949e] text-sm mt-1">Your GitHub activity — live & real</p>
-                </div>
-                <button onClick={() => router.push('/profile')}
-                    className="flex items-center gap-2 bg-[#161b22] border border-[#30363d] px-3 py-2 rounded-lg text-sm hover:border-[#58a6ff] transition-colors">
-                    <User size={14} className="text-[#58a6ff]" />
-                    Profile
-                </button>
-            </div>
-
-            {/* Profile + Total Pushes */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div className="bg-[#161b22] border border-[#30363d] rounded-2xl p-5 flex items-center gap-4 col-span-2">
-                    {user && <>
-                        <img src={user.avatarUrl} className="w-14 h-14 rounded-full border-2 border-[#58a6ff]" />
-                        <div>
-                            <p className="text-lg font-bold">{user.username}</p>
-                            <p className="text-[#8b949e] text-sm">GitHub Connected ✅</p>
-                        </div>
-                    </>}
-                </div>
-                <div className="bg-[#161b22] border border-[#30363d] rounded-2xl p-5 flex flex-col justify-center">
-                    <p className="text-4xl font-bold text-[#58a6ff]">{totalPushes}</p>
-                    <p className="text-[#8b949e] text-xs mt-1 uppercase tracking-widest">Total Pushes</p>
-                </div>
-            </div>
-
-            {/* Productivity Stats */}
-            {stats && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    {[
-                        { label: 'Productivity Score', value: `${stats.productivityScore}/100`, color: 'text-green-400' },
-                        { label: 'Current Streak', value: `${stats.currentStreak} days`, color: 'text-[#58a6ff]' },
-                        { label: 'Longest Streak', value: `${stats.longestStreak} days`, color: 'text-purple-400' },
-                        { label: 'Most Active', value: `${stats.mostActiveDay} ${stats.mostActiveTime}`, color: 'text-yellow-400' },
-                    ].map((stat, i) => (
-                        <div key={i} className="bg-[#161b22] border border-[#30363d] rounded-2xl p-5">
-                            <p className="text-[#8b949e] text-xs uppercase tracking-widest mb-2">{stat.label}</p>
-                            <p className={`text-lg font-bold ${stat.color}`}>{stat.value}</p>
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            {/* Commit Chart */}
-            <div className="bg-[#161b22] border border-[#30363d] rounded-2xl p-6 mb-6">
-                <h2 className="text-xs text-[#8b949e] uppercase tracking-widest mb-5">Commit Activity</h2>
-                <ResponsiveContainer width="100%" height={260}>
-                    <BarChart data={heatmap} barCategoryGap="30%">
-                        <XAxis dataKey="date" stroke="#8b949e" tick={{ fontSize: 11 }} />
-                        <YAxis stroke="#8b949e" tick={{ fontSize: 11 }} />
-                        <Tooltip cursor={{ fill: '#21262d' }}
-                            contentStyle={{ backgroundColor: '#161b22', border: '1px solid #30363d', borderRadius: '8px', fontSize: '12px' }} />
-                        <Bar dataKey="count" fill="#58a6ff" radius={[6, 6, 0, 0]} />
-                    </BarChart>
-                </ResponsiveContainer>
-            </div>
-
-            {/* Top Repos */}
-            <div className="bg-[#161b22] border border-[#30363d] rounded-2xl p-6 mb-6">
-                <h2 className="text-xs text-[#8b949e] uppercase tracking-widest mb-5">Top Repositories</h2>
-                <div className="flex flex-col gap-3">
-                    {repos.map((repo, i) => (
-                        <a key={i} href={repo.url} target="_blank" rel="noreferrer"
-                            className="flex justify-between items-center px-4 py-3 bg-[#0d1117] rounded-xl border border-[#21262d] hover:border-[#58a6ff] transition-colors duration-200 no-underline">
-                            <div>
-                                <p className="text-[#58a6ff] font-semibold text-sm">{repo.name}</p>
-                                <p className="text-[#8b949e] text-xs mt-0.5">{repo.language || 'Unknown'}</p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <span className="text-xs text-[#8b949e] bg-[#161b22] px-2 py-1 rounded-full border border-[#30363d]">
-                                    {repo.pushedAt?.slice(0, 10)}
-                                </span>
-                                <span className="text-xs text-[#e3b341]">⭐ {repo.stars}</span>
-                            </div>
-                        </a>
-                    ))}
-                </div>
-            </div>
-
-            {/* Commit Quality */}
-            {quality && (
-                <div className="bg-[#161b22] border border-[#30363d] rounded-2xl p-6">
-                    <h2 className="text-xs text-[#8b949e] uppercase tracking-widest mb-5">Commit Quality Analyzer</h2>
-
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                        {[
-                            { label: 'Quality Score', value: `${quality.qualityScore}/100`, color: quality.qualityScore >= 60 ? 'text-green-400' : 'text-yellow-400' },
-                            { label: 'Vague Commits', value: `${quality.vaguePercent}%`, color: 'text-red-400' },
-                            { label: 'Avg Msg Length', value: `${quality.avgMessageLength} chars`, color: 'text-[#58a6ff]' },
-                            { label: 'Total Analyzed', value: quality.totalAnalyzed, color: 'text-purple-400' },
-                        ].map((s, i) => (
-                            <div key={i} className="bg-[#0d1117] border border-[#21262d] rounded-xl p-4">
-                                <p className="text-[#8b949e] text-xs uppercase tracking-widest mb-2">{s.label}</p>
-                                <p className={`text-lg font-bold ${s.color}`}>{s.value}</p>
-                            </div>
-                        ))}
+        <div className="min-h-screen bg-[#0d1117] text-white font-mono">
+            
+            {/* Navbar */}
+            <nav className="sticky top-0 z-10 bg-[#0d1117]/80 backdrop-blur border-b border-[#21262d] px-6 py-4">
+                <div className="max-w-6xl mx-auto flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                        <Activity size={20} className="text-[#58a6ff]" />
+                        <span className="font-bold text-lg">Dev Metrics</span>
                     </div>
-
-                    <div className="flex flex-col gap-2">
-                        {quality.recentMessages.map((msg, i) => (
-                            <div key={i} className="flex items-center gap-3 px-4 py-2 bg-[#0d1117] rounded-lg border border-[#21262d]">
-                                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                                    msg.type === 'good' ? 'bg-green-400' :
-                                    msg.type === 'vague' ? 'bg-red-400' : 'bg-yellow-400'
-                                }`}></span>
-                                <span className="text-sm text-[#e6edf3] truncate">{msg.message}</span>
-                                <span className={`text-xs ml-auto flex-shrink-0 ${
-                                    msg.type === 'good' ? 'text-green-400' :
-                                    msg.type === 'vague' ? 'text-red-400' : 'text-yellow-400'
-                                }`}>{msg.type}</span>
-                            </div>
-                        ))}
-                    </div>
+                    <button onClick={() => router.push('/profile')}
+                        className="flex items-center gap-2 bg-[#161b22] border border-[#30363d] px-3 py-2 rounded-lg text-sm hover:border-[#58a6ff] transition-colors">
+                        {user && <img src={user.avatarUrl} className="w-5 h-5 rounded-full" />}
+                        <span>{user?.username}</span>
+                    </button>
                 </div>
-            )}
+            </nav>
+
+            <div className="max-w-6xl mx-auto px-6 py-8">
+
+                {/* Hero Stats */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <Card className="bg-[#161b22] border-[#30363d] col-span-2 md:col-span-1">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center gap-2 mb-1">
+                                <Flame size={16} className="text-orange-400" />
+                                <span className="text-[#8b949e] text-xs uppercase tracking-widest">Current Streak</span>
+                            </div>
+                            <p className="text-3xl font-bold text-orange-400">{stats?.currentStreak ?? 0}</p>
+                            <p className="text-[#8b949e] text-xs mt-1">days in a row</p>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="bg-[#161b22] border-[#30363d]">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center gap-2 mb-1">
+                                <Trophy size={16} className="text-yellow-400" />
+                                <span className="text-[#8b949e] text-xs uppercase tracking-widest">Best Streak</span>
+                            </div>
+                            <p className="text-3xl font-bold text-yellow-400">{stats?.longestStreak ?? 0}</p>
+                            <p className="text-[#8b949e] text-xs mt-1">days ever</p>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="bg-[#161b22] border-[#30363d]">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center gap-2 mb-1">
+                                <GitBranch size={16} className="text-[#58a6ff]" />
+                                <span className="text-[#8b949e] text-xs uppercase tracking-widest">Total Pushes</span>
+                            </div>
+                            <p className="text-3xl font-bold text-[#58a6ff]">{totalPushes}</p>
+                            <p className="text-[#8b949e] text-xs mt-1">last 30 days</p>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="bg-[#161b22] border-[#30363d]">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center gap-2 mb-1">
+                                <Clock size={16} className="text-purple-400" />
+                                <span className="text-[#8b949e] text-xs uppercase tracking-widest">Peak Time</span>
+                            </div>
+                            <p className="text-xl font-bold text-purple-400">{stats?.mostActiveTime ?? '-'}</p>
+                            <p className="text-[#8b949e] text-xs mt-1">{stats?.mostActiveDay ?? '-'}</p>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Productivity Score */}
+                {stats && (
+                    <Card className="bg-[#161b22] border-[#30363d] mb-8">
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-sm text-[#8b949e] uppercase tracking-widest font-normal">
+                                Productivity Score
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex items-center gap-4 mb-3">
+                                <p className="text-4xl font-bold text-green-400">{stats.productivityScore}</p>
+                                <p className="text-[#8b949e] text-sm">/ 100</p>
+                                <Badge className={`ml-auto ${stats.productivityScore >= 70 ? 'bg-green-900 text-green-300' : stats.productivityScore >= 40 ? 'bg-yellow-900 text-yellow-300' : 'bg-red-900 text-red-300'}`}>
+                                    {stats.productivityScore >= 70 ? '🔥 High' : stats.productivityScore >= 40 ? '⚡ Medium' : '📈 Growing'}
+                                </Badge>
+                            </div>
+                            <Progress value={stats.productivityScore} className="h-2 bg-[#21262d]" />
+                            <p className="text-[#8b949e] text-xs mt-2">Based on streak consistency, push frequency, and active days</p>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {/* Commit Chart */}
+                <Card className="bg-[#161b22] border-[#30363d] mb-8">
+                    <CardHeader>
+                        <CardTitle className="text-sm text-[#8b949e] uppercase tracking-widest font-normal">
+                            Commit Activity
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <ResponsiveContainer width="100%" height={240}>
+                            <BarChart data={heatmap} barCategoryGap="30%">
+                                <XAxis dataKey="date" stroke="#8b949e" tick={{ fontSize: 11 }} />
+                                <YAxis stroke="#8b949e" tick={{ fontSize: 11 }} />
+                                <Tooltip cursor={{ fill: '#21262d' }}
+                                    contentStyle={{ backgroundColor: '#161b22', border: '1px solid #30363d', borderRadius: '8px', fontSize: '12px' }} />
+                                <Bar dataKey="count" fill="#58a6ff" radius={[6, 6, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </CardContent>
+                </Card>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+
+                    {/* Top Repos */}
+                    <Card className="bg-[#161b22] border-[#30363d]">
+                        <CardHeader>
+                            <CardTitle className="text-sm text-[#8b949e] uppercase tracking-widest font-normal">
+                                Top Repositories
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex flex-col gap-3">
+                                {repos.map((repo, i) => (
+                                    <a key={i} href={repo.url} target="_blank" rel="noreferrer"
+                                        className="flex justify-between items-center px-3 py-2 bg-[#0d1117] rounded-lg border border-[#21262d] hover:border-[#58a6ff] transition-colors no-underline">
+                                        <div className="flex items-center gap-2">
+                                            <Code2 size={14} className="text-[#58a6ff] flex-shrink-0" />
+                                            <div>
+                                                <p className="text-[#58a6ff] font-semibold text-sm">{repo.name}</p>
+                                                <p className="text-[#8b949e] text-xs">{repo.language || 'Unknown'}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Star size={12} className="text-yellow-400" />
+                                            <span className="text-xs text-yellow-400">{repo.stars}</span>
+                                        </div>
+                                    </a>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Commit Quality */}
+                    {quality && (
+                        <Card className="bg-[#161b22] border-[#30363d]">
+                            <CardHeader>
+                                <div className="flex justify-between items-center">
+                                    <CardTitle className="text-sm text-[#8b949e] uppercase tracking-widest font-normal">
+                                        Commit Health
+                                    </CardTitle>
+                                    <Badge className={quality.qualityScore >= 60 ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'}>
+                                        {quality.qualityScore}/100
+                                    </Badge>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="grid grid-cols-3 gap-3 mb-4">
+                                    <div className="bg-[#0d1117] rounded-lg p-3 text-center border border-[#21262d]">
+                                        <p className="text-green-400 font-bold text-lg">{quality.goodCount}</p>
+                                        <p className="text-[#8b949e] text-xs mt-1">Descriptive</p>
+                                    </div>
+                                    <div className="bg-[#0d1117] rounded-lg p-3 text-center border border-[#21262d]">
+                                        <p className="text-red-400 font-bold text-lg">{quality.vagueCount}</p>
+                                        <p className="text-[#8b949e] text-xs mt-1">Vague</p>
+                                    </div>
+                                    <div className="bg-[#0d1117] rounded-lg p-3 text-center border border-[#21262d]">
+                                        <p className="text-yellow-400 font-bold text-lg">{quality.avgMessageLength}</p>
+                                        <p className="text-[#8b949e] text-xs mt-1">Avg chars</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    {quality.recentMessages.slice(0, 5).map((msg, i) => (
+                                        <div key={i} className="flex items-center gap-2 px-3 py-2 bg-[#0d1117] rounded-lg border border-[#21262d]">
+                                            {msg.type === 'good' ? <CheckCircle2 size={14} className="text-green-400 flex-shrink-0" /> :
+                                             msg.type === 'vague' ? <AlertCircle size={14} className="text-red-400 flex-shrink-0" /> :
+                                             <MinusCircle size={14} className="text-yellow-400 flex-shrink-0" />}
+                                            <span className="text-xs text-[#e6edf3] truncate">{msg.message}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }

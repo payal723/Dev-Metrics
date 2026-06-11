@@ -1,9 +1,14 @@
 'use client'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { GitBranch, BarChart2, Shield } from 'lucide-react'
 
 export default function Home() {
     const router = useRouter()
+
+    useEffect(() => {
+    fetch("https://dev-metrics-cd6k.onrender.com/", { mode: 'no-cors' })
+}, [])
 
     return (
         <div className="min-h-screen bg-[#0d1117] text-white flex flex-col">
