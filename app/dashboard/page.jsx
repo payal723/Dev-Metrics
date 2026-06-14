@@ -7,6 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import SprintGoals from '@/components/ui/SprintGoals'
+import InsightsPanel from '@/components/ui/InsightsPanel'
+import DevCard from '@/components/ui/DevCard'
+import LanguageAnalytics from '@/components/ui/LanguageAnalytics'
+import RepoHealth from '@/components/ui/RepoHealth'
+import { Sparkles, Share2, Code2, HeartPulse } from 'lucide-react'
 
 export default function Dashboard() {
     const router = useRouter()
@@ -137,6 +142,17 @@ export default function Dashboard() {
                 </div>
 
                 <SprintGoals />
+                {/* AI Smart Insights */}
+               <InsightsPanel />
+
+        {/* DevCard - Shareable Profile */}
+          <DevCard />
+
+          {/* Language Analytics */}
+           <LanguageAnalytics />
+
+          {/* Project Health */}
+            <RepoHealth />
 
 
                 {/* Productivity Score */}
