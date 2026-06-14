@@ -1,11 +1,23 @@
+// 'use client'
+// import { useState, useEffect, useRef } from 'react';
+// import {  Download, Share2, GitHub, GitBranch, Flame, Calendar, Code2, Users, FolderGit, Copy, Check } from 'lucide-react';
+// import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+// import { Badge } from '@/components/ui/badge';
+
 'use client'
 import { useState, useEffect, useRef } from 'react';
-import { 
-    Download, Share2, Github, GitBranch, Flame, Calendar, 
-    Code2, Users, FolderGit, Copy, Check 
+import {
+  Download,
+  Share2,
+  GitBranch,
+  Flame,
+  Code2,
+  Users,
+  FolderGit,
+  Copy,
+  Check
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 
 const langColors = {
     JavaScript: '#f1e05a', TypeScript: '#2b7489', Python: '#3572A5',
@@ -125,10 +137,10 @@ export default function DevCard() {
                                 />
                                 <div>
                                     <h3 className="text-white font-bold text-lg">{devCardData.displayName}</h3>
-                                    <div className="flex items-center gap-1.5 text-[#8b949e] text-sm">
-                                        <Github size={12} />
-                                        <span>@{devCardData.username}</span>
-                                    </div>
+                                   <div className="flex items-center gap-1.5 text-[#8b949e] text-sm">
+                               <FolderGit size={12} />
+                            <span>@{devCardData.username}</span>
+                                   </div>
                                     {devCardData.bio && (
                                         <p className="text-[#8b949e] text-xs mt-1 line-clamp-2">{devCardData.bio}</p>
                                     )}

@@ -11,7 +11,7 @@ import InsightsPanel from '@/components/ui/InsightsPanel'
 import DevCard from '@/components/ui/DevCard'
 import LanguageAnalytics from '@/components/ui/LanguageAnalytics'
 import RepoHealth from '@/components/ui/RepoHealth'
-import { Sparkles, Share2, Code2, HeartPulse } from 'lucide-react'
+import { Sparkles, Share2, HeartPulse } from 'lucide-react'
 
 export default function Dashboard() {
     const router = useRouter()
