@@ -11,7 +11,7 @@ const langColors = {
     CSS: '#563d7c', Shell: '#89e051', default: '#58a6ff'
 }
 
-function GitHub({ size = 20, className = '' }) {
+function Github({ size = 20, className = '' }) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -108,7 +108,7 @@ export default function ProfileTab({ user: userProp }) {
                             <div>
                                 <h3 className="text-white font-bold text-xl">{devCardData.displayName}</h3>
                                 <div className="flex items-center gap-1.5 text-[#8b949e] text-sm">
-                                    <GitHub size={12} />
+                                    <Github size={12} />
                                     <span>@{devCardData.username}</span>
                                 </div>
                                 {devCardData.bio && <p className="text-[#8b949e] text-xs mt-1.5 line-clamp-2">{devCardData.bio}</p>}
@@ -163,7 +163,7 @@ export default function ProfileTab({ user: userProp }) {
                     <div className="flex flex-col gap-3">
                         <a href={`https://github.com/${devCardData.username}`} target="_blank" rel="noreferrer"
                             className="flex items-center gap-3 p-3 bg-[#0d1117] rounded-lg border border-[#21262d] hover:border-[#58a6ff] transition-all group">
-                            <GitHub size={16} className="text-[#8b949e] group-hover:text-[#58a6ff]" />
+                            <Github size={16} className="text-[#8b949e] group-hover:text-[#58a6ff]" />
                             <div>
                                 <p className="text-white text-sm font-medium">GitHub Profile</p>
                                 <p className="text-[#484f58] text-xs">@{devCardData.username}</p>
