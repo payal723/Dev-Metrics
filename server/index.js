@@ -15,7 +15,8 @@ import insightsRoutes from './routes/insights.js';
 import devcardRoutes from './routes/devcard.js';
 import languageRoutes from './routes/languages.js';
 import repohealthRoutes from './routes/repohealth.js';
-
+import reviewsRoutes from './routes/reviews.js';
+import focusRoutes from './routes/focus.js';
 
 
 
@@ -23,8 +24,10 @@ const app = express();
 connectDb();
 
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://dev-metrics-delta.vercel.app'],
-    credentials: true
+    origin: ['http://localhost:3000', 'https://dev-metrics-delta.vercel.app', 'https://dev-metrics-delta.vercel.app/dashboard'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(cookieParser());
@@ -47,8 +50,8 @@ app.use('/api/insights', insightsRoutes);
 app.use('/api/devcard', devcardRoutes);
 app.use('/api/languages', languageRoutes);
 app.use('/api/repohealth', repohealthRoutes);
-
-
+app.use('/api/reviews', reviewsRoutes);
+app.use('/api/focus', focusRoutes);
 
 
 

@@ -128,3 +128,31 @@
     @apply font-sans;
   }
 }
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    25% { transform: translateY(-20px) translateX(10px); }
+    50% { transform: translateY(-10px) translateX(-10px); }
+    75% { transform: translateY(-30px) translateX(5px); }
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+.animate-float { animation: float linear infinite; }
+.animate-fadeIn { 
+    opacity: 0;
+    animation: fadeIn 0.8s ease-out forwards;
+}
+.text-shimmer {
+    background: linear-gradient(90deg, #58a6ff, #a371f7, #f0883e, #58a6ff);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s linear infinite;
+}
